@@ -101,8 +101,12 @@ def test_pahe():
         results.append({"provider": "animepahe", "endpoint": "/anime/{slug}", "status": "FAIL", "detail": str(e)[:100]})
 
     try:
-        r = pa.episode_watch("demon-slayer-kimetsu-no-yaiba")
-        results.append({"provider": "animepahe", "endpoint": "/watch/{slug}", "status": "PASS", "detail": f"servers={len(r.get('servers',[]))}"})
+        r = pa.episode_watch("the-dangers-in-my-heart-the-movie")
+        stream = "NO"
+        if r.get("stream"):
+            q = r["stream"].get("qualities", [])
+            stream = f"m3u8={len(q)}q"
+        results.append({"provider": "animepahe", "endpoint": "/watch/{slug}", "status": "PASS", "detail": f"servers={len(r.get('servers',[]))} stream={stream}"})
     except Exception as e:
         results.append({"provider": "animepahe", "endpoint": "/watch/{slug}", "status": "FAIL", "detail": str(e)[:100]})
 

@@ -10,8 +10,8 @@ Unified REST API router for scraping anime and manga from multiple Indonesian pr
 
 | Provider | Type | Search | Detail | Stream/Read |
 |---|---|---|---|---|
-| **HiAnime** | Anime | ✅ | ✅ | ✅ m3u8/HLS |
-| **AnimePahe** | Anime | ✅ | ✅ | ✅ embed URLs |
+| **HiAnime** | Anime | ✅ | ✅ | ✅ m3u8/HLS (1080p) |
+| **AnimePahe** | Anime | ✅ | ✅ | ✅ m3u8/HLS (1080p) |
 | **Maid** | Manga | ✅ | ✅ | ✅ 18 images/ch |
 | **Komikpedia** | Manga | ✅ | ✅ | ✅ 16 images/ch |
 
@@ -53,7 +53,10 @@ curl "http://localhost:8888/anime/one-piece?provider=animepahe"
 ### Watch (get streaming sources)
 ```bash
 curl "http://localhost:8888/watch/one-piece/ep-1?provider=hianime"
-# Returns: servers (HSUB/SUB/DUB) + m3u8 qualities (360p/720p/1080p)
+curl "http://localhost:8888/watch/the-dangers-in-my-heart-the-movie?provider=animepahe"
+# Returns: servers + m3u8 qualities (1080p/720p/480p)
+
+curl "http://localhost:8888/stream/{videoid}?provider=hianime"   # Direct m3u8 lookup
 ```
 
 ### Manga Detail
@@ -192,9 +195,9 @@ fastapi, uvicorn, httpx, beautifulsoup4, lxml
 
 ---
 
-## 💰 Donate
+## 💰 Support
 
-Support this project via crypto:
+Like this project? Drop a donation:
 
 | Coin | Address |
 |---|---|
@@ -207,9 +210,9 @@ Support this project via crypto:
 
 ## 📄 License
 
-MIT License. See [LICENSE](LICENSE).
+MIT License — free to use, modify, and distribute.
 
 ---
 
-Built with ❤️ for the Indonesian anime/manga community.
+Built for the anime & manga community.
 ty.

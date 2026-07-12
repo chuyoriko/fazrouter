@@ -2,6 +2,7 @@ import re
 import base64
 import httpx
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 BASE_URL = "https://animepahe.live"
 HEADERS = {
@@ -155,7 +156,7 @@ def episode_watch(slug: str, ep_slug: str = None) -> dict:
     servers = []
     for srv in soup.select("[data-video]"):
         encoded = srv.get("data-video", "")
-        name = srv.text.strip().replace("Choose this server", "").strip()
+        name = srv.text.strip().replace("Choose this server", "").strip().replace("\n", " ").strip()
         url_decoded = ""
         if encoded:
             try:
@@ -179,10 +180,53 @@ def episode_watch(slug: str, ep_slug: str = None) -> dict:
                 "url": href if href.startswith("http") else BASE_URL + href,
             })
 
+    # Try to extract m3u8 from the first embed
+    stream_data = {}
+    if servers:
+        first_srv = servers[0]
+        embed_url = first_srv["url"]
+        if embed_url and embed_url.startswith("http"):
+            try:
+                embed_html = fetch(embed_url)
+                # Find master.m3u8 in embed page
+                m3u8_match = re.search(r"(https?://[^\"'\s]+?/master\.m3u8[^\"'\s]*)", embed_html)
+                if not m3u8_match:
+                    m3u8_match = re.search(r"'(https?://[^'\s]+?/master\.m3u8[^'\s]*)'", embed_html)
+                if not m3u8_match:
+                    m3u8_match = re.search(r'"(https?://[^"\s]+?/master\.m3u8[^"\s]*)"', embed_html)
+
+                if m3u8_match:
+                    master_url = m3u8_match.group(1)
+                    stream_data["master_m3u8"] = master_url
+
+                    # Fetch and parse qualities
+                    try:
+                        m3u8_content = fetch(master_url)
+                        qualities = []
+                        for m in re.finditer(
+                            r'#EXT-X-STREAM-INF:.*?BANDWIDTH=(\d+).*?RESOLUTION=(\d+x\d+).*?\n(https?://[^\n]+)',
+                            m3u8_content, re.I
+                        ):
+                            bw, res, qurl = m.groups()
+                            name = "1080p" if "1920" in res else "720p" if "1280" in res else "480p" if "852" in res else res
+                            qualities.append({
+                                "quality": name,
+                                "resolution": res,
+                                "bandwidth": int(bw),
+                                "url": qurl,
+                            })
+                        if qualities:
+                            stream_data["qualities"] = qualities
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
     return {
         "episode_title": episode_title,
         "servers": servers,
         "related_episodes": related_eps,
+        "stream": stream_data if stream_data else None,
     }
 
 
