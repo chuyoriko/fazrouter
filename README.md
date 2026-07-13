@@ -12,8 +12,10 @@ Unified REST API router for scraping anime and manga from multiple Indonesian pr
 |---|---|---|---|---|
 | **HiAnime** | Anime | ✅ | ✅ | ✅ m3u8/HLS (1080p) |
 | **AnimePahe** | Anime | ✅ | ✅ | ✅ m3u8/HLS (1080p) |
-| **Maid** | Manga | ✅ | ✅ | ✅ 18 images/ch |
-| **Komikpedia** | Manga | ✅ | ✅ | ✅ 16 images/ch |
+| **NanimeID** | Anime | ✅ | ✅ | ✅ Direct MP4 (1080p) |
+| **Anoboy** | Anime | ✅ | ✅ | ✅ Blogger embed |
+| **Maid** | Manga | ✅ | ✅ | ✅ imgbox CDN |
+| **Komikpedia** | Manga | ✅ | ✅ | ✅ komiku CDN |
 
 ---
 
@@ -73,19 +75,19 @@ curl "http://localhost:8888/chapter/one-piece/one-piece-chapter-1162?provider=ma
 
 ### Full Endpoint List
 
-| Endpoint | HiAnime | AnimePahe | Maid | Komikpedia |
-|---|---|---|---|---|
-| `GET /search?q=` | ✅ | ✅ | ✅ | ✅ |
-| `GET /home` | ✅ | ✅ | ✅ | ✅ |
-| `GET /anime/{slug}` | ✅ | ✅ | - | - |
-| `GET /manga/{slug}` | - | - | ✅ | ✅ |
-| `GET /watch/{slug}/{ep}` | ✅ | ✅ | - | - |
-| `GET /chapter/{slug}/{ch}` | - | - | ✅ | ✅ |
-| `GET /stream/{videoid}` | ✅ | - | - | - |
-| `GET /popular` | ✅ | ✅ | - | - |
-| `GET /movie` | ✅ | ✅ | - | - |
-| `GET /genre/{name}` | ✅ | ✅ | - | - |
-| `GET /new-season` | - | ✅ | - | - |
+| Endpoint | HiAnime | AnimePahe | NanimeID | Anoboy | Maid | Komikpedia |
+|---|---|---|---|---|---|---|
+| `GET /search?q=` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `GET /home` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `GET /anime/{slug}` | ✅ | ✅ | ✅ (ID) | - | - | - |
+| `GET /manga/{slug}` | - | - | - | - | ✅ | ✅ |
+| `GET /watch/{slug}/{ep}` | ✅ | ✅ | ✅ (ID/ep) | ✅ | - | - |
+| `GET /chapter/{slug}/{ch}` | - | - | - | - | ✅ | ✅ |
+| `GET /stream/{videoid}` | ✅ | - | - | - | - | - |
+| `GET /popular` | ✅ | ✅ | ✅ | - | - | - |
+| `GET /movie` | ✅ | ✅ | - | - | - | - |
+| `GET /genre/{name}` | ✅ | ✅ | - | - | - | - |
+| `GET /new-season` | - | ✅ | - | - | - | - |
 
 ---
 

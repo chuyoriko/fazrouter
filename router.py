@@ -1,4 +1,4 @@
-"""Anime & Manga Scraper API - Unified Router"""
+"""Fazrouter - Unified Anime & Manga API Router"""
 
 import uvicorn
 import asyncio
@@ -13,12 +13,14 @@ from animepahe import (
     genre as pahe_genre, new_season as pahe_new_season,
 )
 from hianime_api_internal import HiAnimeClient
+import nanimeid as nani
+import anoboy as ab
 
 # Manga providers
 import maid as maid_provider
 import komikpedia as kp_provider
 
-app = FastAPI(title="Anime & Manga Scraper API", version="2.0.0")
+app = FastAPI(title="Fazrouter", version="2.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 hianime = HiAnimeClient()
@@ -36,9 +38,9 @@ async def shutdown():
 async def root():
     return {
         "service": "Fazrouter",
-        "version": "2.0.0",
+        "version": "2.1.0",
         "providers": {
-            "anime": ["hianime", "animepahe"],
+            "anime": ["hianime", "animepahe", "nanimeid", "anoboy"],
             "manga": ["maid", "komikpedia"],
         },
         "docs": "/docs",
@@ -48,6 +50,8 @@ async def root():
 @app.get("/search")
 async def search(q: str = Query(...), provider: str = Query("hianime"), page: int = Query(1, ge=1)):
     if provider == "animepahe": return pahe_search(q, page)
+    if provider == "nanimeid": return nani.search(q)
+    if provider == "anoboy": return ab.search(q)
     if provider == "maid": return maid_provider.search(q)
     if provider == "komikpedia": return kp_provider.search(q)
     return await hianime.search(q, page)
@@ -56,6 +60,8 @@ async def search(q: str = Query(...), provider: str = Query("hianime"), page: in
 @app.get("/home")
 async def home(provider: str = Query("hianime")):
     if provider == "animepahe": return pahe_home()
+    if provider == "nanimeid": return nani.home()
+    if provider == "anoboy": return ab.home()
     if provider == "maid": return maid_provider.home()
     if provider == "komikpedia": return kp_provider.home()
     return await hianime.home()
@@ -63,6 +69,12 @@ async def home(provider: str = Query("hianime")):
 # --- ANIME DETAIL ---
 @app.get("/anime/{slug}")
 async def anime_detail(slug: str, provider: str = Query("hianime")):
+    if provider == "nanimeid":
+        try:
+            anime_id = int(slug)
+            return nani.anime_detail(anime_id)
+        except ValueError:
+            raise HTTPException(400, "nanimeid requires numeric anime ID")
     if provider == "animepahe": return {"success": True, "data": pahe_detail(slug)}
     return await hianime.anime_detail(slug)
 
@@ -75,7 +87,15 @@ async def manga_detail(slug: str, provider: str = Query("maid")):
 # --- WATCH ---
 @app.get("/watch/{slug}/{ep}")
 async def watch(slug: str, ep: str, provider: str = Query("hianime")):
+    if provider == "nanimeid":
+        try:
+            anime_id = int(slug)
+            ep_num = int(ep)
+            return nani.episode_watch(anime_id, ep_num)
+        except ValueError:
+            raise HTTPException(400, "nanimeid requires numeric anime ID and episode number")
     if provider == "animepahe": return {"success": True, "data": pahe_watch(slug)}
+    if provider == "anoboy": return {"success": True, "data": ab.episode_watch(slug)}
     return await hianime.watch(slug, ep)
 
 # --- READ CHAPTER ---
@@ -99,9 +119,11 @@ async def stream(videoid: str, provider: str = Query("hianime")):
         raise HTTPException(400, f"stream endpoint only available for hianime provider")
     return await hianime.stream(videoid)
 
-# --- POPULAR ---
+# --- POPULAR/ANIME LIST ---
 @app.get("/popular")
+@app.get("/anime-list")
 async def popular(provider: str = Query("hianime"), page: int = Query(1, ge=1)):
+    if provider == "nanimeid": return nani.anime_list(page)
     if provider == "animepahe": return pahe_popular(page)
     return await hianime.popular(page)
 
@@ -116,12 +138,6 @@ async def movies(provider: str = Query("hianime"), page: int = Query(1, ge=1)):
 async def genre(genre: str, provider: str = Query("hianime"), page: int = Query(1, ge=1)):
     if provider == "animepahe": return pahe_genre(genre, page)
     return await hianime.genre(genre, page)
-
-# --- ANIME LIST ---
-@app.get("/anime-list")
-async def anime_list(provider: str = Query("hianime"), page: int = Query(1, ge=1)):
-    if provider == "animepahe": return pahe_list(page)
-    return await hianime.popular(page)
 
 # --- NEW SEASON ---
 @app.get("/new-season")
