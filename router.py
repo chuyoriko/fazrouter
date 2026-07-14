@@ -15,10 +15,14 @@ from animepahe import (
 from hianime_api_internal import HiAnimeClient
 import nanimeid as nani
 import anoboy as ab
+import allanime as alla
 
 # Manga providers
 import maid as maid_provider
 import komikpedia as kp_provider
+
+# Movie/TV providers
+import yesmovies as ym
 
 app = FastAPI(title="Fazrouter", version="2.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -40,8 +44,9 @@ async def root():
         "service": "Fazrouter",
         "version": "2.1.0",
         "providers": {
-            "anime": ["hianime", "animepahe", "nanimeid", "anoboy"],
+            "anime": ["hianime", "animepahe", "nanimeid", "anoboy", "allanime"],
             "manga": ["maid", "komikpedia"],
+            "movies": ["yesmovies"],
         },
         "docs": "/docs",
     }
@@ -52,8 +57,10 @@ async def search(q: str = Query(...), provider: str = Query("hianime"), page: in
     if provider == "animepahe": return pahe_search(q, page)
     if provider == "nanimeid": return nani.search(q)
     if provider == "anoboy": return ab.search(q)
+    if provider == "allanime": return alla.search(q, page)
     if provider == "maid": return maid_provider.search(q)
     if provider == "komikpedia": return kp_provider.search(q)
+    if provider == "yesmovies": return ym.search(q, page)
     return await hianime.search(q, page)
 
 # --- HOME ---
@@ -62,8 +69,10 @@ async def home(provider: str = Query("hianime")):
     if provider == "animepahe": return pahe_home()
     if provider == "nanimeid": return nani.home()
     if provider == "anoboy": return ab.home()
+    if provider == "allanime": return alla.home()
     if provider == "maid": return maid_provider.home()
     if provider == "komikpedia": return kp_provider.home()
+    if provider == "yesmovies": return ym.home()
     return await hianime.home()
 
 # --- ANIME DETAIL ---
@@ -76,6 +85,13 @@ async def anime_detail(slug: str, provider: str = Query("hianime")):
         except ValueError:
             raise HTTPException(400, "nanimeid requires numeric anime ID")
     if provider == "animepahe": return {"success": True, "data": pahe_detail(slug)}
+    if provider == "anoboy": return {"success": True, "data": ab.series_detail(slug)}
+    if provider == "allanime": return alla.anime_detail(slug)
+    if provider == "yesmovies":
+        data = ym.movie_detail(slug)
+        if not data.get("title") or data["title"] == slug.replace("-", " "):
+            data = ym.tv_detail(slug)
+        return {"success": True, "data": data}
     return await hianime.anime_detail(slug)
 
 # --- MANGA DETAIL ---
@@ -96,6 +112,10 @@ async def watch(slug: str, ep: str, provider: str = Query("hianime")):
             raise HTTPException(400, "nanimeid requires numeric anime ID and episode number")
     if provider == "animepahe": return {"success": True, "data": pahe_watch(slug)}
     if provider == "anoboy": return {"success": True, "data": ab.episode_watch(slug)}
+    if provider == "allanime": return alla.watch(slug, ep)
+    if provider == "yesmovies":
+        data = ym.watch(slug, ep)
+        return {"success": True, "data": data}
     return await hianime.watch(slug, ep)
 
 # --- READ CHAPTER ---
@@ -110,6 +130,7 @@ async def servers(slug: str, ep: str, provider: str = Query("hianime")):
     if provider == "animepahe":
         data = pahe_watch(slug)
         return {"success": True, "servers": data["servers"]}
+    if provider == "allanime": return alla.servers(slug, ep)
     return await hianime.servers(slug, ep)
 
 # --- STREAM ---
@@ -125,18 +146,30 @@ async def stream(videoid: str, provider: str = Query("hianime")):
 async def popular(provider: str = Query("hianime"), page: int = Query(1, ge=1)):
     if provider == "nanimeid": return nani.anime_list(page)
     if provider == "animepahe": return pahe_popular(page)
+    if provider == "allanime": return alla.popular(page)
+    if provider == "yesmovies": return ym.movies_page(page)
     return await hianime.popular(page)
 
 # --- MOVIES ---
 @app.get("/movie")
 async def movies(provider: str = Query("hianime"), page: int = Query(1, ge=1)):
     if provider == "animepahe": return pahe_movies(page)
+    if provider == "allanime": return alla.movies(page)
+    if provider == "yesmovies": return ym.movies_page(page)
     return await hianime.movies(page)
+
+# --- TV SHOWS ---
+@app.get("/tvshows")
+async def tvshows(page: int = Query(1, ge=1), provider: str = Query("yesmovies")):
+    if provider == "yesmovies": return ym.tvshows_page(page)
+    raise HTTPException(400, "tvshows only available for yesmovies provider")
 
 # --- GENRE ---
 @app.get("/genre/{genre}")
 async def genre(genre: str, provider: str = Query("hianime"), page: int = Query(1, ge=1)):
     if provider == "animepahe": return pahe_genre(genre, page)
+    if provider == "allanime": return alla.genre(genre, page)
+    if provider == "yesmovies": return ym.genre_browse(genre, page)
     return await hianime.genre(genre, page)
 
 # --- NEW SEASON ---

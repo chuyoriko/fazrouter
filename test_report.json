@@ -1,0 +1,157 @@
+{
+  "total": 25,
+  "passed": 25,
+  "failed": 0,
+  "results": [
+    {
+      "provider": "hianime",
+      "endpoint": "/home",
+      "status": "PASS",
+      "detail": "latest=12"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/search?q=slime",
+      "status": "PASS",
+      "detail": "results=16"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/anime/{slug}",
+      "status": "PASS",
+      "detail": "title=That Time I Got Reincarnated as a Slime Season 4 eps=14"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/watch/{slug}/{ep}",
+      "status": "PASS",
+      "detail": "video_id=37086faf8067c880 qualities=3"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/stream/{videoid}",
+      "status": "PASS",
+      "detail": "qualities=3"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/popular",
+      "status": "PASS",
+      "detail": "results=34"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/movie",
+      "status": "PASS",
+      "detail": "results=34"
+    },
+    {
+      "provider": "hianime",
+      "endpoint": "/genre/isekai",
+      "status": "PASS",
+      "detail": "results=34"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/search?q=slime",
+      "status": "PASS",
+      "detail": "results=2"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/home",
+      "status": "PASS",
+      "detail": "latest=24"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/anime/{slug}",
+      "status": "PASS",
+      "detail": "title=Demon Slayer: Kimetsu no Yaiba eps=66"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/watch/{slug}",
+      "status": "PASS",
+      "detail": "servers=2 stream=m3u8=2q"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/popular",
+      "status": "PASS",
+      "detail": "results=32"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/movie",
+      "status": "PASS",
+      "detail": "results=32"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/genre/isekai",
+      "status": "PASS",
+      "detail": "results=32"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/anime-list",
+      "status": "PASS",
+      "detail": "results=56"
+    },
+    {
+      "provider": "animepahe",
+      "endpoint": "/new-season",
+      "status": "PASS",
+      "detail": "results=32"
+    },
+    {
+      "provider": "maid",
+      "endpoint": "/search?q=one+piece",
+      "status": "PASS",
+      "detail": "results=1"
+    },
+    {
+      "provider": "maid",
+      "endpoint": "/home",
+      "status": "PASS",
+      "detail": "latest=30"
+    },
+    {
+      "provider": "maid",
+      "endpoint": "/manga/one-piece",
+      "status": "PASS",
+      "detail": "title=One Piece Bahasa Indonesia - M ch=297"
+    },
+    {
+      "provider": "maid",
+      "endpoint": "/chapter/one-piece-1162",
+      "status": "PASS",
+      "detail": "title= images=18"
+    },
+    {
+      "provider": "komikpedia",
+      "endpoint": "/search?q=one+piece",
+      "status": "PASS",
+      "detail": "results=2"
+    },
+    {
+      "provider": "komikpedia",
+      "endpoint": "/home",
+      "status": "PASS",
+      "detail": "latest=24"
+    },
+    {
+      "provider": "komikpedia",
+      "endpoint": "/manga/one-piece",
+      "status": "PASS",
+      "detail": "title=One Piece ch=52"
+    },
+    {
+      "provider": "komikpedia",
+      "endpoint": "/read/chapter",
+      "status": "PASS",
+      "detail": "title=One Piece Chapter 1188 Bahasa  images=16"
+    }
+  ]
+}
