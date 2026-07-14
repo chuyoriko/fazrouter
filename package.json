@@ -1,0 +1,1 @@
+{"name": "fazrouter","description": "Fazrouter - Unified REST API for scraping anime, manga, movies & TV from 8 providers","version": "1.0.0","private": true,"scripts": {"start": "python router.py","test": "python test_all.py"}} 

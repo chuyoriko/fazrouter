@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: fazrouter
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python router.py
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
